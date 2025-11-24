@@ -57,7 +57,18 @@
 			<scope>runtime</scope>
 		</dependency>
 		
-		<!-- PostgreSQL (para Supabase) -->
+		<!-- SQLite (para producción en Render) -->
+		<dependency>
+			<groupId>org.xerial</groupId>
+			<artifactId>sqlite-jdbc</artifactId>
+			<version>3.47.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.orm</groupId>
+			<artifactId>hibernate-community-dialects</artifactId>
+		</dependency>
+		
+		<!-- PostgreSQL (para Supabase - opcional) -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
