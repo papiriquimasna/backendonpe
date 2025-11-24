@@ -1,0 +1,56 @@
+========================================
+🔑 CÓMO OBTENER EL TOKEN CORRECTO
+========================================
+
+El token que proporcionaste es un JWT de tu aplicación, NO es el token de la API de consulta DNI.
+
+PASOS PARA OBTENER EL TOKEN CORRECTO:
+
+1. Ve a: https://apisperu.com/
+2. Haz clic en "Registrarse" (esquina superior derecha)
+3. Completa el formulario con:
+   - Tu nombre
+   - Tu email
+   - Una contraseña
+4. Verifica tu email (revisa tu bandeja de entrada)
+5. Inicia sesión en: https://apisperu.com/login
+6. En tu Dashboard, busca "API Token" o "Mi Token"
+7. COPIA ese token (será diferente al que me diste)
+8. Pégalo en: src/main/resources/application.properties
+   En la línea: reniec.api.token=AQUI_TU_TOKEN_REAL
+
+PLAN GRATUITO:
+✅ 100 consultas por día
+✅ Sin tarjeta de crédito
+✅ Datos reales de RENIEC
+
+========================================
+⚠️ IMPORTANTE
+========================================
+
+El token que me diste:
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im9jaG9hcmV5ZXNqb3N1ZUBnbWFpbC5jb20ifQ.9t8mfh_fDcqLwuVhi1x43XMLWDJvEjzG7tuXCPJsh2I
+
+NO es el token correcto. Este es un JWT de tu propia aplicación.
+
+El token correcto de apisperu.com se verá diferente y será más largo.
+
+========================================
+🧪 PROBAR QUE FUNCIONA
+========================================
+
+Una vez que tengas el token correcto:
+
+1. Reinicia la aplicación
+2. Prueba en Postman:
+   GET http://localhost:8080/api/reniec/consultar-dni/TU_DNI
+
+Deberías ver:
+{
+  "success": true,
+  "nombres": "TUS NOMBRES REALES",
+  "apellidoPaterno": "TU APELLIDO PATERNO",
+  "apellidoMaterno": "TU APELLIDO MATERNO"
+}
+
+========================================

@@ -1,0 +1,635 @@
+{
+	"info": {
+		"name": "API Sistema de Gestión - Completa",
+		"description": "Colección completa con todos los endpoints funcionales incluyendo evidencias opcionales en reclamaciones",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"version": "2.0.0"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "0. CONSULTA DNI (RENIEC)",
+			"description": "Endpoints para consultar datos por DNI",
+			"item": [
+				{
+					"name": "0.1 Consultar DNI",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/reniec/consultar-dni/12345678",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reniec", "consultar-dni", "12345678"]
+						},
+						"description": "Consulta los datos de una persona por su DNI. Devuelve nombres y apellidos automáticamente."
+					},
+					"response": []
+				},
+				{
+					"name": "0.2 Validar DNI",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/reniec/validar-dni/12345678",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reniec", "validar-dni", "12345678"]
+						},
+						"description": "Valida que el DNI sea correcto y devuelve los datos si existe."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "1. AUTENTICACIÓN",
+			"description": "Endpoints para registro, verificación y login",
+			"item": [
+				{
+					"name": "1.1 Registro CON Autocompletado DNI (Recomendado)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dni\": \"11223344\",\n  \"dniDigitoVerificador\": \"5\",\n  \"correo\": \"ochoareyesjosue@gmail.com\",\n  \"distrito\": \"Lima\",\n  \"departamento\": \"Lima\",\n  \"pin\": \"112233\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/registro",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "registro"]
+						},
+						"description": "Registra un usuario SIN nombres/apellidos. El sistema los obtiene automáticamente consultando el DNI."
+					},
+					"response": []
+				},
+				{
+					"name": "1.2 Registro Manual (Sin DNI)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombres\": \"Josue\",\n  \"apellidos\": \"Ochoa Reyes\",\n  \"dni\": \"11223344\",\n  \"dniDigitoVerificador\": \"5\",\n  \"correo\": \"ochoareyesjosue@gmail.com\",\n  \"distrito\": \"Lima\",\n  \"departamento\": \"Lima\",\n  \"pin\": \"112233\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/registro",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "registro"]
+						},
+						"description": "Registra un nuevo usuario y envía código de verificación al email"
+					},
+					"response": []
+				},
+				{
+					"name": "1.3 Verificar Código (Paso 2 - Completa registro)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"correo\": \"ochoareyesjosue@gmail.com\",\n  \"codigo\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/verificar-codigo",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "verificar-codigo"]
+						},
+						"description": "Verifica el código recibido por email y completa el registro. Devuelve el token JWT."
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set(\"token\", jsonData.token);",
+									"    console.log(\"Token guardado: \" + jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "1.4 Login (Con DNI y PIN)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dni\": \"11223344\",\n  \"pin\": \"112233\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Inicia sesión con DNI y PIN. Devuelve el token JWT."
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set(\"token\", jsonData.token);",
+									"    console.log(\"Token guardado: \" + jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "1.5 Login SuperAdmin (Por Defecto)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dni\": \"99999999\",\n  \"pin\": \"999999\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Login con el superadministrador creado por defecto"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set(\"token\", jsonData.token);",
+									"    console.log(\"Token guardado: \" + jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "2. PERFIL DE USUARIO",
+			"description": "Endpoints para gestión de perfil",
+			"item": [
+				{
+					"name": "2.1 Ver Mi Perfil",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/usuario/perfil",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "usuario", "perfil"]
+						},
+						"description": "Obtiene los datos del perfil del usuario autenticado (solo lectura)"
+					},
+					"response": []
+				},
+				{
+					"name": "2.2 Cambiar Foto de Perfil",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "archivo",
+									"type": "file",
+									"src": [],
+									"description": "Selecciona una imagen (JPG, PNG, etc.)"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/usuario/foto-perfil",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "usuario", "foto-perfil"]
+						},
+						"description": "Sube una nueva foto de perfil"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. LIBRO DE RECLAMACIONES",
+			"description": "Endpoints para crear y consultar reclamaciones",
+			"item": [
+				{
+					"name": "3.1 Crear Reclamación (Sin Evidencia)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"asunto\": \"Demora en la atención\",\n  \"descripcion\": \"Esperé más de 2 horas para ser atendido. El servicio fue muy lento.\",\n  \"tipo\": \"QUEJA\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/reclamaciones",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reclamaciones"]
+						},
+						"description": "Crea una reclamación sin adjuntar evidencia. Tipos válidos: QUEJA, RECLAMO, SUGERENCIA"
+					},
+					"response": []
+				},
+				{
+					"name": "3.2 Crear Reclamación (Con Evidencia Opcional)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "asunto",
+									"value": "Cobro indebido en mi cuenta",
+									"type": "text",
+									"description": "Título de la reclamación"
+								},
+								{
+									"key": "descripcion",
+									"value": "Se realizó un cargo de S/. 150.00 que no corresponde. Adjunto captura de pantalla.",
+									"type": "text",
+									"description": "Descripción detallada"
+								},
+								{
+									"key": "tipo",
+									"value": "RECLAMO",
+									"type": "text",
+									"description": "Valores: QUEJA, RECLAMO, SUGERENCIA"
+								},
+								{
+									"key": "evidencia",
+									"type": "file",
+									"src": [],
+									"description": "OPCIONAL - Imagen de evidencia (JPG, PNG, PDF)"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/reclamaciones",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reclamaciones"]
+						},
+						"description": "Crea una reclamación con opción de adjuntar evidencia fotográfica. El campo evidencia es OPCIONAL."
+					},
+					"response": []
+				},
+				{
+					"name": "3.3 Ver Mis Reclamaciones",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/reclamaciones/mis-reclamaciones",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reclamaciones", "mis-reclamaciones"]
+						},
+						"description": "Obtiene todas las reclamaciones del usuario autenticado"
+					},
+					"response": []
+				},
+				{
+					"name": "3.4 Ver Todas las Reclamaciones (Solo Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/reclamaciones/todas",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reclamaciones", "todas"]
+						},
+						"description": "Obtiene todas las reclamaciones del sistema. Solo para ADMINISTRADOR y SUPERADMINISTRADOR"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. CHATBOT",
+			"description": "Endpoints para interactuar con el chatbot",
+			"item": [
+				{
+					"name": "4.1 Chatbot - Saludo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"mensaje\": \"Hola\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/chat/mensaje",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "chat", "mensaje"]
+						},
+						"description": "Saluda al chatbot y ve las opciones disponibles"
+					},
+					"response": []
+				},
+				{
+					"name": "4.2 Chatbot - Iniciar Votación",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"mensaje\": \"Quiero votar\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/chat/mensaje",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "chat", "mensaje"]
+						},
+						"description": "Inicia el proceso de votación. El chatbot verificará si ya votaste y te mostrará los candidatos."
+					},
+					"response": []
+				},
+				{
+					"name": "4.3 Chatbot - Votar (Enviar Número)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"mensaje\": \"1\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/chat/mensaje",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "chat", "mensaje"]
+						},
+						"description": "Envía el número del candidato para votar. Primero vota por presidente, luego por alcalde."
+					},
+					"response": []
+				},
+				{
+					"name": "4.4 Chatbot - Consultar Horarios",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"mensaje\": \"¿Cuál es el horario de atención?\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/chat/mensaje",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "chat", "mensaje"]
+						},
+						"description": "Consulta los horarios de atención"
+					},
+					"response": []
+				},
+				{
+					"name": "4.5 Ver Historial de Chat",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/chat/historial",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "chat", "historial"]
+						},
+						"description": "Obtiene el historial completo de conversaciones con el chatbot"
+					},
+					"response": []
+				},
+				{
+					"name": "4.6 Obtener Sugerencias Contextuales",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/chat/sugerencias",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "chat", "sugerencias"]
+						},
+						"description": "Obtiene sugerencias contextuales según el estado del usuario (si ya votó, si tiene voto en progreso, etc.)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. GESTIÓN DE ROLES",
+			"description": "Endpoints para administración de usuarios (Solo SuperAdmin)",
+			"item": [
+				{
+					"name": "5.1 Cambiar Role a ADMINISTRADOR",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"usuarioId\": 2,\n  \"nuevoRole\": \"ADMINISTRADOR\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/usuario/cambiar-role",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "usuario", "cambiar-role"]
+						},
+						"description": "Cambia el role de un usuario a ADMINISTRADOR. Solo SUPERADMINISTRADOR puede ejecutar esto."
+					},
+					"response": []
+				},
+				{
+					"name": "5.2 Cambiar Role a USUARIO",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"usuarioId\": 2,\n  \"nuevoRole\": \"USUARIO\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/usuario/cambiar-role",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "usuario", "cambiar-role"]
+						},
+						"description": "Cambia el role de un usuario a USUARIO (role por defecto)"
+					},
+					"response": []
+				},
+				{
+					"name": "5.3 Cambiar Role a SUPERADMINISTRADOR",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"usuarioId\": 2,\n  \"nuevoRole\": \"SUPERADMINISTRADOR\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/usuario/cambiar-role",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "usuario", "cambiar-role"]
+						},
+						"description": "Cambia el role de un usuario a SUPERADMINISTRADOR"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
