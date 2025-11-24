@@ -13,6 +13,9 @@ public class EmailService {
 
     public void enviarCodigoVerificacion(String destinatario, String codigo) {
         try {
+            System.out.println("📧 Intentando enviar email a: " + destinatario);
+            System.out.println("📧 Código: " + codigo);
+            
             SimpleMailMessage mensaje = new SimpleMailMessage();
             mensaje.setFrom("ochoareyesjosue@gmail.com");
             mensaje.setTo(destinatario);
@@ -26,11 +29,14 @@ public class EmailService {
                 "Sistema de Registro"
             );
             
+            System.out.println("📧 Enviando email...");
             mailSender.send(mensaje);
             System.out.println("✅ Email enviado exitosamente a: " + destinatario);
             
         } catch (Exception e) {
             System.err.println("❌ Error al enviar email: " + e.getMessage());
+            System.err.println("❌ Tipo de error: " + e.getClass().getName());
+            e.printStackTrace();
             System.out.println("📧 Código de verificación (para pruebas): " + codigo);
             throw new RuntimeException("No se pudo enviar el email. Verifica la configuración de correo.");
         }
