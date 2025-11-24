@@ -10,12 +10,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(
-                    "http://localhost:5173",  // Vite local
-                    "http://localhost:3000",  // React local
-                    "http://localhost:5174",  // Vite alternativo
-                    "https://*.vercel.app",   // Si despliegas frontend en Vercel
-                    "https://*.netlify.app"   // Si despliegas frontend en Netlify
+                .allowedOriginPatterns(
+                    "http://localhost:*",      // Cualquier puerto local
+                    "https://*.vercel.app",    // Vercel
+                    "https://*.netlify.app",   // Netlify
+                    "https://*.onrender.com"   // Render
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*")
